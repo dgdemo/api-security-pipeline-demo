@@ -21,6 +21,10 @@ def get_all_users():
     return return_value
 
 
+# VULN-02: Excessive Data Exposure
+# This endpoint exposes full user records including sensitive fields
+# (e.g., passwords, internal attributes) without any filtering or access control.
+# Debug functionality is accessible in a production-like context.
 def debug():
     return_value = jsonify({'users': User.get_all_users_debug()})
     return return_value
@@ -41,13 +45,21 @@ def me():
         }
         return Response(json.dumps(responseObject), 200, mimetype="application/json")
         
-
+# VULN-01: Broken Object Level Authorization
+# This endpoint returns user data based on the username in the path
+# without verifying that the authenticated caller owns this object
+# or has sufficient privileges.
 def get_by_username(username):
     if User.get_user(username):
-        return Response(str(User.get_user(username)), 200, mimetype="application/json")
+        user_data = json.loads(User.get_user(username))
+        response = {
+            "vuln": "BOLA",
+            "message": "No authorization check performed",
+            "data": user_data
+        }
+        return Response(json.dumps(response), 200, mimetype="application/json")
     else:
         return Response(error_message_helper("User not found"), 404, mimetype="application/json")
-
 
 def register_user():
     request_data = request.get_json()
@@ -81,7 +93,10 @@ def register_user():
     else:
         return Response(error_message_helper("User already exists. Please Log in."), 200, mimetype="application/json")
 
-
+# VULN-03: User Enumeration
+# This login flow returns different error messages depending on whether
+# the username exists or the password is incorrect. This allows attackers
+# to enumerate valid usernames by observing response differences.
 def login_user():
     request_data = request.get_json()
 
@@ -98,7 +113,7 @@ def login_user():
                 'auth_token': auth_token
             }
             return Response(json.dumps(responseObject), 200, mimetype="application/json")
-        if vuln:  # Password Enumeration
+        if vuln:  # VULN-03: Enumeration via distinct error messages
             if user and request_data.get('password') != user.password:
                 return Response(error_message_helper("Password is not correct for the given username."), 200,
                                 mimetype="application/json")
@@ -175,7 +190,10 @@ def update_email(username):
                 return Response(error_message_helper("Please Provide a valid email address."), 400,
                                 mimetype="application/json")
 
-
+# VULN-04: Unauthorized Password Change
+# This endpoint updates a user's password based on the username in the path
+# without verifying that the authenticated caller owns the target account.
+# An attacker can modify another user's credentials, leading to account takeover.
 def update_password(username):
     request_data = request.get_json()
     resp = token_validator(request.headers.get('Authorization'))
@@ -201,7 +219,6 @@ def update_password(username):
             return Response(json.dumps(responseObject), 204, mimetype="application/json")
         else:
             return Response(error_message_helper("Malformed Data"), 400, mimetype="application/json")
-
 
 def delete_user(username):
     resp = token_validator(request.headers.get('Authorization'))

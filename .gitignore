@@ -95,3 +95,8 @@ venv.bak/
 .mypy_cache/
 
 .idea/
+
+
+database/database.db
+zap-api-report.html
+zap-api-report.md
