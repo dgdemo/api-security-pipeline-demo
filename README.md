@@ -94,6 +94,7 @@ python3 -m venv .venv
 source .venv/bin/activate   # mac/linux
 # .venv\Scripts\activate    # windows
 
+export SECRET_KEY=[dev-local-secret]
 pip install -r requirements.txt
 ```
 3 - Run the vulnerable API
