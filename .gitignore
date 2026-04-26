@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 
 
@@ -97,6 +98,6 @@ venv.bak/
 .idea/
 
 
-database/database.db
-zap-api-report.html
-zap-api-report.md
+database/*.db
+zap-*.html
+zap-*.md
