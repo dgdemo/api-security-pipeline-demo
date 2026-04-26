@@ -91,7 +91,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Start Flask app
-        working-directory: ./sql-flask
+        working-directory: .
         run: |
           nohup python app.py > flask.log 2>&1 &
           sleep 5
