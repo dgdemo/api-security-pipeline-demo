@@ -100,7 +100,10 @@ jobs:
       - name: Verify Flask app is running
         run: |
           curl http://127.0.0.1:5000/openapi.json | head
-          curl http://127.0.0.1:5000/users/v1 | head
+      - name: Initialize test data
+        run: |
+          curl -f http://127.0.0.1:5000/createdb
+          curl -f http://127.0.0.1:5000/users/v1 | head
 
       - name: Run OWASP ZAP API Scan
         run: |
