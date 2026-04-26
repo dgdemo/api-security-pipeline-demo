@@ -1,5 +1,4 @@
 name: Security CI
-
 on:
   push:
     branches: [ main ]
@@ -9,6 +8,8 @@ on:
 jobs:
   security-checks:
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     steps:
       - name: Checkout repo
