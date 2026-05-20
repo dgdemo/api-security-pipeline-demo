@@ -36,7 +36,7 @@ This repo demonstrates how security tooling and pipeline automation surface API 
 - SAST (Semgrep)
 - DAST (OWASP ZAP)
 - SCA (pip-audit)
-- Secrets detection (gitleaks)
+- Secrets detection (git-secrets)
 - Clear CI feedback
 
 ## CI/CD Security Workflow
