@@ -47,6 +47,27 @@ jobs:
       - name: Run pip-audit Scan
         run: |
           pip-audit -r requirements.txt
+  trivy_scan:
+    name: trivy/ci
+    runs-on: ubuntu-latest
+    if: (github.actor != 'dependabot[bot]')
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          severity: HIGH, CRITICAL
+          ignore-unfixed: true
+          exit-code: 1
+
   gitsecrets_scan:
     name: git-secrets/ci
     runs-on: ubuntu-latest
