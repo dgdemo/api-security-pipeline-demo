@@ -39,6 +39,62 @@ This repo demonstrates how security tooling and pipeline automation surface API 
 - Secrets detection (gitleaks)
 - Clear CI feedback
 
+## CI/CD Security Workflow
+
+```mermaid
+flowchart TD
+  A["Event: push/pull_request to main"]:::indigo --> B["Job: semgrep_scan (semgrep/ci)"]:::teal
+  A --> C["Job: pip_audit_scan (pip-audit/ci)"]:::violet
+  A --> D["Job: trivy_scan (trivy/ci)"]:::rose
+  A --> E["Job: gitsecrets_scan (git-secrets/ci)"]:::orange
+  A --> F["Job: dast-zap (OWASP_ZAP/ci)"]:::cyan
+
+  subgraph Bsteps["semgrep_scan Steps"]
+    B1["Checkout repo (actions/checkout@v4)"]
+    B2["Run Semgrep (semgrep/semgrep-action@v1, config: p/security-audit)"]
+    B --> B1 --> B2
+  end
+
+  subgraph Csteps["pip_audit_scan Steps"]
+    C1["Checkout repository (actions/checkout@v3)"]
+    C2["Setup Python 3.11 (actions/setup-python@v5)"]
+    C3["Install pip-audit and dependencies"]
+    C4["Run pip-audit -r requirements.txt"]
+    C --> C1 --> C2 --> C3 --> C4
+  end
+
+  subgraph Dsteps["trivy_scan Steps"]
+    D1["Checkout repository (actions/checkout@v4)"]
+    D2["Run Trivy filesystem scan (aquasecurity/trivy-action@0.35.0)"]
+    D --> D1 --> D2
+  end
+
+  subgraph Esteps["gitsecrets_scan Steps"]
+    E1["Checkout repository (actions/checkout@v3)"]
+    E2["Install git-secrets (apt-get)"]
+    E3["Run git secrets --scan -r ."]
+    E --> E1 --> E2 --> E3
+  end
+
+  subgraph Fsteps["dast-zap Steps"]
+    F1["Checkout repository (actions/checkout@v3)"]
+    F2["Setup Python 3.11 (actions/setup-python@v5)"]
+    F3["Install project dependencies"]
+    F4["Start Flask app"]
+    F5["Verify Flask app / Initialize test data"]
+    F6["Run OWASP ZAP API Scan (Docker)"]
+    F7["Upload ZAP Report (artifact)"]
+    F8["Upload Flask log (artifact, always)"]
+    F --> F1 --> F2 --> F3 --> F4 --> F5 --> F6 --> F7 --> F8
+  end
+
+  classDef indigo stroke:#818cf8,fill:#eef2ff;
+  classDef teal stroke:#2dd4bf,fill:#f0fdfa;
+  classDef violet stroke:#a78bfa,fill:#f5f3ff;
+  classDef orange stroke:#fb923c,fill:#fff7ed;
+  classDef cyan stroke:#22d3ee,fill:#ecfeff;
+  classDef rose stroke:#fb7185,fill:#fff1f2;
+```
 ## Developer Experience Goal
 
 Findings are surfaced with clear descriptions, affected endpoints, and actionable remediation guidance so developers can fix issues quickly without deep security expertise.
