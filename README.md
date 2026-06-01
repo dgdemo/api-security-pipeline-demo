@@ -119,10 +119,11 @@ Human review confirmed the finding and corrected the OWASP classification genera
 
 This experiment demonstrates how AI-assisted review can complement traditional security tooling when evaluating authorization logic and business logic vulnerabilities.
 
-Additional documentation:
+### Additional Documentation
 
-- `docs/ai-governance.md`
-- `docs/ai-review-output/authz-review-local.md`
+- [AI Governance Considerations](docs/ai-governance.md)
+- [AI Review Output](docs/ai-review-output/authz-review-local.md)
+- [Authorization Review Prompt](prompts/authz_review_prompt.txt)
 
 ## Primary Scenarios
 
