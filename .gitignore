@@ -101,3 +101,13 @@ venv.bak/
 database/*.db
 zap-*.html
 zap-*.md
+
+# Scanner outputs
+bandit-results*.json
+zap-api-report.*
+
+# Temporary files
+tmp/
+
+# Ollama experiments
+*.log
